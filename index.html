@@ -16,149 +16,167 @@
 <body>
 	<canvas id="myCanvas"></canvas>
 	<script type="text/javascript">
-			/************* object ***********************************/
-		    // common event 
-			var EventUtil={
 
-				addHandler:function(element,type,handler){
-						if(element.addEventListener)
-						{
-							element.addEventListener(type,handler,false); // fase: 在冒泡阶段捕获
-						}
-						else if(element.attachEvent)
-						{
-							element.attachEvent("on"+type,handler);
-						}
-						else
-						{
-							element["on"+type]=handler;
-						}
-				},
 
-				removeHandler:function(element,type,handler)
+		/************* global variate****************************/
+		var step=0;
+		var num1=0;
+		var angle=0;
+		var EventUtil;
+		var fblq;
+		var c;
+		/************* object ***********************************/
+		// common event 
+		var EventUtil=
+		{
+
+			addHandler:function(element,type,handler)
+			{
+				if(element.addEventListener)
 				{
-						if(element.removeEventListener)
-						{
-							element.removeEventListener(type,handler,false); // fase: 在冒泡阶段捕获
-						}
-						else if(element.detachEvent)
-						{
-							element.detachEvent("on"+type,handler);
-						}
-						else
-						{
-							element["on"+type]=null;
-						};
-				},
-
-				getEvent:function(event){
-					return event || window.event;
-				},
-
-				getTarget:function(event){
-						return event.target || event.srcElement;
-				},
-
-				preventDefault:function(event)
+					element.addEventListener(type,handler,false); // fase: 在冒泡阶段捕获
+				}
+				else if(element.attachEvent)
 				{
-						if(event.preventDefault)
-						{
-							event.preventDefault();
-						}
-						else
-						{
-							event.returnValue = false;
-						}
-				},
-
-				stopProgration:function(event)
+					element.attachEvent("on"+type,handler);
+				}
+				else
 				{
-						if(event.stopProgration)
-						{
-							event.stopProgration();
-						}
-						else
-						{
-							event.cancelBubble = true;
-						}
-				},
+					element["on"+type]=handler;
+				}
+			},
 
+			removeHandler:function(element,type,handler)
+			{
+				if(element.removeEventListener)
+				{
+					element.removeEventListener(type,handler,false); // fase: 在冒泡阶段捕获
+				}
+				else if(element.detachEvent)
+				{
+					element.detachEvent("on"+type,handler);
+				}
+				else
+				{
+					element["on"+type]=null;
+				};
+			},
 
-			};	
+			getEvent:function(event)
+			{
+				return event || window.event;
+			},
 
-	        /*************funtion declaration******************/
-		    //The Fibonacci sequence .use a function with a name
-		    var fblq=(function f(n){
-		    	if(n==0)
-		    	{
-		    		return 0;
-		    	}
-		    	else if (n==1)
-		    	{
-		    		return 1;
-		    	}
-		    	else
-		    	{
-		    		return(f(n-1)+f(n-2));
-		    	}
+			getTarget:function(event)
+			{
+				return event.target || event.srcElement;
+			},
 
-		    });
+			preventDefault:function(event)
+			{
+				if(event.preventDefault)
+				{
+					event.preventDefault();
+				}
+				else
+				{
+					event.returnValue = false;
+				}
+			},
+
+			stopProgration:function(event)
+			{
+					if(event.stopProgration)
+					{
+						event.stopProgration();
+					}
+					else
+					{
+						event.cancelBubble = true;
+					}
+			},
+
+		};	
+
+	    /*************funtion declaration******************/
+		//The Fibonacci sequence .use a function with a name
+		var fblq=(function f(n)
+		{
+		    if(n==0)
+		    {
+		    	return 0;
+		    }
+		    else if (n==1)
+		    {
+		    	return 1;
+		    }
+		    else
+		    {
+		    	return(f(n-1)+f(n-2));
+		    }
+
+		});
+
+		function slectNum(num1,num2)
+		{	
+		    var choice=num2-num1+1;
+		    return Math.floor(Math.random()*choice+num1);
+
+		 };
+
+		/*background color*/
+		function drawBackground(element)
+		{
+
+			//var gradient1=bgd.createLinearGradient(bgd.width,bgd.height,bgd.width,0);
+			//gradient1.addColorStop(0,"#101880");
+			//gradient1.addColorStop(1,"#000805");
+			var gradient1=element.createRadialGradient(element.width,0,0,element.width,0,element.width);
+			gradient1.addColorStop(0,"#000030");
+			gradient1.addColorStop(1,"#000000");
+			element.fillStyle=gradient1;
+			element.fillRect(0,0,element.width,element.height);
+
+		}
 
         /*************draw*************************************/
 		var c=document.getElementById("myCanvas");
 		EventUtil.addHandler(c,"load",drawSky());
 		EventUtil.addHandler(window,"resize",drawSky());
-		
+		EventUtil.addHandler(window,"unload",function(){
+			step=null;
+			num1=null;
+			angle=null;
+			EventUtil=null;
+			fblq=null;
+			c=null;
 
-		var step=0;
-		function drawSky(){
+		});
 
-
-			c.width=document.documentElement.clientWidth;
-			c.height=document.documentElement.clientHeight;
-			console.log('width:',c.width);
-			console.log('height:',c.height);
-			if(c.getContext)
-			{
-				var bgd=c.getContext("2d");
-				bgd.width=c.width;
-				bgd.height=c.height;
-
-				/*background color*/
-				//var gradient1=bgd.createLinearGradient(bgd.width,bgd.height,bgd.width,0);
-				//gradient1.addColorStop(0,"#101880");
-				//gradient1.addColorStop(1,"#000805");
-				var gradient1=bgd.createRadialGradient(bgd.width,0,0,bgd.width,0,bgd.width);
-				gradient1.addColorStop(0,"#000030");
-				gradient1.addColorStop(1,"#000000");
-				bgd.fillStyle=gradient1;
-				bgd.fillRect(0,0,bgd.width,bgd.height);
-
-
-
-
-
-
+		function drawStar(element)
+		{
 			    /*star*/
 			    var x1=2,x2=10,y1=1,y2=10,y3=16;
-			    var interval=new Array(20);
+			   // var x1=0.125em,x2=0.625em,y1=0.0625em,y2=0.625em,y3=1em;
+			    var interval=new Array(20); //store fblq value
 
-			    interval[0]=fblq(5);
-			    interval[1]=fblq(6);
+
 			    console.log(interval[0]);
 			    console.log(interval[1]);
+			   // interval[0]=fblq(5);
+			   // interval[1]=fblq(6);
+			    interval[0]=fblq(7);
+			    interval[1]=fblq(8);
 
-				var loop=0;
-				var angle=0.01;
-			    while(loop<25)
+				var a=element.width-Math.floor(element.width*1/100);
+				var b=Math.floor(element.height*1/100);
+				console.log('step:',step);
+				if((step%5)==0)
 				{
-					var a=bgd.width-Math.floor(bgd.width*1/100);
-					var b=Math.floor(bgd.height*1/100);
-					loop+=1;
-						
+   			    
+				   /* angle is from 0 to pi/2 */
 
-
-			    	for(var i=0,j=0;(a-i>0) && (b<bgd.height); i+=1,j+=0.2)
+					for(var i=0,j=0;(a>0)&&(b<element.height);i+=1,j+=0.2)
 			   	 	{
 			    	
 				    	if(i>1)
@@ -166,117 +184,137 @@
 				    		interval[i]=interval[i-1]+interval[i-2];
 				    	}
 				    		
-				    	a= a-Math.floor(Math.cos(angle*Math.PI)*interval[i]);
-				    	b=b+Math.floor(Math.sin(angle*Math.PI)*interval[i]);
-				 		bgd.beginPath();
-				    	bgd.moveTo(a,b-y2);
-				    	bgd.lineTo(a-x1-j,b-y1-j);
-				    	bgd.lineTo(a-x2-j,b);		
-		    			bgd.lineTo(a-x1-j,b+y1+j);	
-		    			bgd.lineTo(a,b+y3+j);
-		    			bgd.lineTo(a+x1+j,b+y1+j);
-		    			bgd.lineTo(a+x2+j,b);
-		    			bgd.lineTo(a+x1+j,b-y1-j);
-		    			bgd.lineTo(a,b-y2-j);
-		    			bgd.closePath();
+				    	a= a-Math.floor(Math.cos(((angle%50)/100)*Math.PI)*interval[i]);
+				    	b=b+Math.floor(Math.sin(((angle%50)/100)*Math.PI)*interval[i]);
+				 		element.beginPath();
+				    	element.moveTo(a,b-y2);
+				    	element.lineTo(a-x1-j,b-y1-j);
+				    	element.lineTo(a-x2-j,b);		
+		    			element.lineTo(a-x1-j,b+y1+j);	
+		    			element.lineTo(a,b+y3+j);
+		    			element.lineTo(a+x1+j,b+y1+j);
+		    			element.lineTo(a+x2+j,b);
+		    			element.lineTo(a+x1+j,b-y1-j);
+		    			element.lineTo(a,b-y2-j);
+		    			element.closePath();
 
-				    	bgd.fillStyle="#FFFFBB";
-				    	bgd.fill();
+				    	element.fillStyle="#FFFFBB";
+				    	element.fill();
 					}
 
-					angle+=0.02;
+					//angle+=0.02;
+					angle+=2;	
+
 				}
+		}
 
-				/*moon*/
-				bgd.beginPath();
-			    var pointx=Math.floor(bgd.width*4/5);
-			    var pointy=Math.floor(bgd.height*1/3);
-			    var radius=Math.floor(bgd.height*1/7);
-			    bgd.arc(pointx,pointy,radius,0.1*Math.PI,1.33*Math.PI,false);
-			    bgd.moveTo(pointx-Math.floor(radius*Math.cos(0.33*Math.PI)),pointy-Math.floor(radius*Math.sin(0.33*Math.PI)));
-			    bgd.quadraticCurveTo(pointx-Math.floor((radius*Math.cos(0.3*Math.PI))*4/5),pointy+Math.floor((radius*Math.sin(0.3*Math.PI))*4/5),pointx+Math.floor(radius*Math.cos(0.1*Math.PI)),pointy+Math.floor(radius*Math.sin(0.1*Math.PI)));
-			    bgd.closePath();
-			    bgd.fillStyle="#FFFF00";
-			    bgd.fill();
+		function drawMoon(element)
+		{
+			element.beginPath();
+		    var pointx=Math.floor(element.width*4/5);
+		    var pointy=Math.floor(element.height*1/3);
+		    var radius=Math.floor(element.height*1/7);
+		    element.arc(pointx,pointy,radius,0.1*Math.PI,1.33*Math.PI,false);
+		    element.moveTo(pointx-Math.floor(radius*Math.cos(0.33*Math.PI)),pointy-Math.floor(radius*Math.sin(0.33*Math.PI)));
+		    element.quadraticCurveTo(pointx-Math.floor((radius*Math.cos(0.3*Math.PI))*4/5),pointy+Math.floor((radius*Math.sin(0.3*Math.PI))*4/5),pointx+Math.floor(radius*Math.cos(0.1*Math.PI)),pointy+Math.floor(radius*Math.sin(0.1*Math.PI)));
+			element.closePath();
+		    element.fillStyle="#FFFF00";
+		    element.fill();
+		}
 
-
-				/* moving house*/
-
-				var offset=0;	
-
-				function run()
-				{
-					var housebodywidth=Math.floor(bgd.width*1/15),housebodyheight=Math.floor(bgd.height*1/9);
-					//var h1=Math.floor(bgd.width*1/9);
-					var h1=Math.floor(step % bgd.width);
-					var v1=Math.floor(bgd.height*7/9);
+		function drawMovingHouse(element,offset)
+		{
+			var housebodywidth=Math.floor(element.width*1/15),housebodyheight=Math.floor(element.height*1/9);
+			//var h1=Math.floor(element.width*1/9);
+					var h1=Math.floor(step % element.width);
+					var v1=Math.floor(element.height*7/9);
 
 
 					//housebody
-					bgd.beginPath();
-					bgd.moveTo(h1,v1);
-					bgd.fillStyle="#A9A9AA";
-					bgd.fillRect(h1,v1,housebodywidth,housebodyheight);
-					bgd.setLineDash([0,0,0]);
-	  				bgd.lineWidth=1;
-					bgd.strokeStyle="#FFFF89";
-					bgd.strokeRect(h1,v1,housebodywidth,housebodyheight);
-					bgd.closePath();
+					element.beginPath();
+					element.moveTo(h1,v1);
+					element.fillStyle="#A9A9AA";
+					element.fillRect(h1,v1,housebodywidth,housebodyheight);
+					element.setLineDash([0,0,0]);
+	  				element.lineWidth=1;
+					element.strokeStyle="#FFFF89";
+					element.strokeRect(h1,v1,housebodywidth,housebodyheight);
+					element.closePath();
 					
 
 					//roof
-					bgd.beginPath();
-					bgd.moveTo(h1,v1);
-					bgd.lineTo(h1+Math.floor(housebodywidth/2),v1-Math.floor(housebodyheight/2));
-					bgd.lineTo(h1+housebodywidth,v1);
-					bgd.lineTo(h1,v1);
-					bgd.fillStyle="#800080";
-					bgd.fill();
-					bgd.setLineDash([0,0,0]);
-					bgd.lineWidth=1;
-					bgd.strokeStyle="#FFFF89";
-					bgd.stroke();
-					bgd.closePath();
+					element.beginPath();
+					element.moveTo(h1,v1);
+					element.lineTo(h1+Math.floor(housebodywidth/2),v1-Math.floor(housebodyheight/2));
+					element.lineTo(h1+housebodywidth,v1);
+					element.lineTo(h1,v1);
+					element.fillStyle="#800080";
+					element.fill();
+					element.setLineDash([0,0,0]);
+					element.lineWidth=1;
+					element.strokeStyle="#FFFF89";
+					element.stroke();
+					element.closePath();
 
 					//window
-					bgd.beginPath();
-					bgd.moveTo(h1+Math.floor(housebodywidth/8),v1-Math.floor(housebodyheight/8));
-					bgd.fillStyle="#FFFF89";
-					bgd.fillRect(h1+Math.floor(housebodywidth/8),v1+Math.floor(housebodyheight/8),Math.floor(housebodywidth/4),Math.floor(housebodyheight/3));
-					bgd.closePath();
+					element.beginPath();
+					element.moveTo(h1+Math.floor(housebodywidth/8),v1-Math.floor(housebodyheight/8));
+					element.fillStyle="#FFFF89";
+					element.fillRect(h1+Math.floor(housebodywidth/8),v1+Math.floor(housebodyheight/8),Math.floor(housebodywidth/4),Math.floor(housebodyheight/3));
+					element.closePath();
 
 					//door
-					bgd.beginPath();
-					bgd.moveTo(h1+Math.floor(housebodywidth/8),v1-Math.floor(housebodyheight/8));
-					bgd.fillStyle="#FFFF89";
-					bgd.fillRect(h1+Math.floor(housebodywidth*2/3),v1+Math.floor(housebodyheight*4/7),Math.floor(housebodywidth/6),Math.floor(housebodyheight*3/7));
-					bgd.closePath();
+					element.beginPath();
+					element.moveTo(h1+Math.floor(housebodywidth/8),v1-Math.floor(housebodyheight/8));
+					element.fillStyle="#FFFF89";
+					element.fillRect(h1+Math.floor(housebodywidth*2/3),v1+Math.floor(housebodyheight*4/7),Math.floor(housebodywidth/6),Math.floor(housebodyheight*3/7));
+					element.closePath();
 					
 					//wheel
+					element.beginPath();
+					element.setLineDash([3,3,3]);
+	  				element.lineDashOffset =-offset;
+	  				element.lineWidth=Math.floor(housebodywidth/10);
+					//element.moveTo(h1+Math.floor(housebodywidth),v1+Math.floor(housebodyheight));
+					element.arc(h1+Math.floor(housebodywidth),v1+Math.floor(housebodyheight*5/4),Math.floor(housebodyheight/4),0,2*Math.PI);
+					element.fillStyle="#800080";
+					element.fill();
+					element.strokeStyle="#FFFF89";
+					element.stroke();
+					element.closePath();
 
-					bgd.beginPath();
-					bgd.setLineDash([3,3,3]);
-	  				bgd.lineDashOffset =-offset;
-	  				bgd.lineWidth=Math.floor(housebodywidth/10);
-					//bgd.moveTo(h1+Math.floor(housebodywidth),v1+Math.floor(housebodyheight));
-					bgd.arc(h1+Math.floor(housebodywidth),v1+Math.floor(housebodyheight*5/4),Math.floor(housebodyheight/4),0,2*Math.PI);
-					bgd.fillStyle="#800080";
-					bgd.fill();
-					bgd.strokeStyle="#FFFF89";
-					bgd.stroke();
-					bgd.closePath();
+					element.beginPath();
+					element.arc(h1,v1+Math.floor(housebodyheight*5/4),Math.floor(housebodyheight/4),0,2*Math.PI);
+					element.fillStyle="#800080";
+					element.fill();
+					element.strokeStyle="#FFFF89";
+					element.stroke();
+					element.closePath();
 
-					bgd.beginPath();
-					bgd.arc(h1,v1+Math.floor(housebodyheight*5/4),Math.floor(housebodyheight/4),0,2*Math.PI);
-					bgd.fillStyle="#800080";
-					bgd.fill();
-					bgd.strokeStyle="#FFFF89";
-					bgd.stroke();
-					bgd.closePath();
+		}
 
-				}
 
-				function wheelrun(){
+		function drawSky()
+		{
+			c.width=document.documentElement.clientWidth;
+			c.height=document.documentElement.clientHeight;
+			console.log('width:',c.width);
+			console.log('height:',c.height);
+			if(c.getContext)
+			{
+				var bgd=c.getContext("2d");
+
+
+				bgd.width=c.width;
+				bgd.height=c.height;
+				var offset=0;	
+
+				drawBackground(bgd);
+				drawStar(bgd);
+				drawMoon(bgd);
+
+				/* moving house*/
+				function wheelRun(){
 					offset++;
 					if(offset>30)
 					{
@@ -287,13 +325,13 @@
 						drawSky();
 					}
 
-					run();
+					drawMovingHouse(bgd,offset);
 
-					t=setTimeout(wheelrun,20);
+					t=setTimeout(wheelRun,20);
 
 
 				}
-				wheelrun();
+				wheelRun();
 
 			}
 	}
