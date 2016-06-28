@@ -139,20 +139,6 @@
 
 		}
 
-        /*************draw*************************************/
-		var c=document.getElementById("myCanvas");
-		EventUtil.addHandler(c,"load",drawSky());
-		EventUtil.addHandler(window,"resize",drawSky());
-		EventUtil.addHandler(window,"unload",function(){
-			step=null;
-			num1=null;
-			angle=null;
-			EventUtil=null;
-			fblq=null;
-			c=null;
-
-		});
-
 		function drawStar(element)
 		{
 			    /*star*/
@@ -335,6 +321,22 @@
 
 			}
 	}
+
+
+	 /*************draw*************************************/
+	var c=document.getElementById("myCanvas");
+	EventUtil.addHandler(c,"load",drawSky());
+	EventUtil.addHandler(window,"resize",drawSky());
+	EventUtil.addHandler(window,"unload",function()
+	{
+		step=null;
+		num1=null;
+		angle=null;
+		EventUtil=null;
+		fblq=null;
+		c=null;
+	});
+
 	</script>
 	
 </body>
